@@ -57,7 +57,7 @@
             transform: translateY(3px);
             box-shadow: 0 2px 0 0 #4b5563;
         }
-        #numpad-header {
+        .drag-handle {
             cursor: move;
             user-select: none;
         }
@@ -183,24 +183,27 @@
 
     <!-- Number Pad -->
     <div id="numpad-container" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
-        <div class="bg-gray-200 rounded-lg shadow-xl w-full max-w-[280px]">
-            <div id="numpad-header" class="p-2 bg-gray-300 rounded-t-lg">
+        <div class="bg-gray-200 rounded-lg shadow-xl w-full max-w-[320px]">
+            <div id="numpad-header" class="drag-handle p-2 bg-gray-300 rounded-t-lg">
                 <h3 class="font-bold text-center text-gray-700">Number Pad</h3>
             </div>
-            <div id="numpad" class="grid grid-cols-3 gap-2 p-3">
+            <div id="numpad" class="grid grid-cols-4 gap-2 p-3">
                 <button class="numpad-btn" onclick="appendNumpad('1')">1</button>
                 <button class="numpad-btn" onclick="appendNumpad('2')">2</button>
                 <button class="numpad-btn" onclick="appendNumpad('3')">3</button>
+                <button class="numpad-btn" onclick="backspaceNumpad()">&larr;</button>
                 <button class="numpad-btn" onclick="appendNumpad('4')">4</button>
                 <button class="numpad-btn" onclick="appendNumpad('5')">5</button>
                 <button class="numpad-btn" onclick="appendNumpad('6')">6</button>
+                <button class="numpad-btn" onclick="appendNumpad('.')">.</button>
                 <button class="numpad-btn" onclick="appendNumpad('7')">7</button>
                 <button class="numpad-btn" onclick="appendNumpad('8')">8</button>
                 <button class="numpad-btn" onclick="appendNumpad('9')">9</button>
-                <button class="numpad-btn" onclick="appendNumpad('.')">.</button>
                 <button class="numpad-btn" onclick="appendNumpad('0')">0</button>
-                <button class="numpad-btn" onclick="backspaceNumpad()">&larr;</button>
-                <button class="numpad-btn bg-blue-500 text-white col-span-3" onclick="closeNumpad()">Done</button>
+                <button class="numpad-btn bg-blue-500 text-white col-span-4" onclick="closeNumpad()">Done</button>
+            </div>
+             <div id="numpad-footer" class="drag-handle p-2 bg-gray-300 rounded-b-lg text-center text-gray-600">
+                DRAG
             </div>
         </div>
     </div>
@@ -444,9 +447,15 @@
         function dragElement(elmnt) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             const header = document.getElementById("numpad-header");
+            const footer = document.getElementById("numpad-footer");
+            
             if (header) {
                 header.onmousedown = dragMouseDown;
                 header.ontouchstart = dragMouseDown;
+            }
+             if (footer) {
+                footer.onmousedown = dragMouseDown;
+                footer.ontouchstart = dragMouseDown;
             }
 
             function dragMouseDown(e) {
