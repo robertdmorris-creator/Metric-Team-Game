@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metric Mania - Team Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden; /* Prevent scrolling */
+        }
+        .team-section {
+            transition: background-color 0.5s ease;
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .answer-input {
+            border: 4px solid #9ca3af;
+            border-radius: 1rem;
+            padding: 1rem;
+            width: 320px; /* Increased width for more space */
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background-color: #f9fafb;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        .unit-select {
+            border: 4px solid #9ca3af;
+            border-radius: 1rem;
+            padding: 1rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background-color: #f9fafb;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 0 0 #4b5563;
+        }
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 0 #4b5563;
+        }
+        #numpad-header {
+            cursor: move;
+            user-select: none;
+        }
+        .numpad-btn {
+            height: 60px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            transition: background-color 0.2s;
+        }
+         .numpad-btn:active {
+            background-color: #d1d5db;
+        }
+        /* Custom styles for setup modal */
+        #setup-modal input[type="text"] {
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 2rem; /* Increased font size */
+        }
+        #setup-modal input[type="color"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 80px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        #setup-modal input[type="color"]::-webkit-color-swatch {
+            border-radius: 0.75rem;
+            border: 4px solid #9ca3af;
+        }
+        #setup-modal input[type="color"]::-moz-color-swatch {
+            border-radius: 0.75rem;
+            border: 4px solid #9ca3af;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    
+    <!-- Setup Modal -->
+    <div id="setup-modal" class="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-white p-10 rounded-2xl shadow-2xl text-center w-full max-w-3xl">
+            <h1 class="text-6xl font-extrabold mb-8">Game Setup</h1>
+            <div class="grid grid-cols-2 gap-8 mb-8">
+                <div>
+                    <label for="team1-name-input" class="text-4xl font-bold mb-2 block">Team 1 Name</label>
+                    <input type="text" id="team1-name-input" value="Team 1" class="w-full text-center">
+                </div>
+                 <div>
+                    <label for="team2-name-input" class="text-4xl font-bold mb-2 block">Team 2 Name</label>
+                    <input type="text" id="team2-name-input" value="Team 2" class="w-full text-center">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-8 mb-10">
+                 <div>
+                    <label for="team1-color-input" class="text-4xl font-bold mb-2 block">Team 1 Color</label>
+                    <input type="color" id="team1-color-input" value="#a5b4fc">
+                </div>
+                 <div>
+                    <label for="team2-color-input" class="text-4xl font-bold mb-2 block">Team 2 Color</label>
+                    <input type="color" id="team2-color-input" value="#fca5a5">
+                </div>
+            </div>
+            <button id="start-game-btn" class="btn bg-green-500 hover:bg-green-600 text-white">Start Game!</button>
+        </div>
+    </div>
+
+
+    <div id="game-container" class="flex h-screen w-screen relative hidden">
+        <button id="fullscreen-btn" class="absolute top-4 right-4 bg-white p-3 rounded-full shadow-md z-50 hover:bg-gray-200 transition">
+             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+            </svg>
+        </button>
+
+        <!-- Team 1 Section (Left) -->
+        <div id="team1-section" class="team-section w-1/4 flex flex-col items-center justify-center p-8 border-r-4 border-gray-300">
+            <h2 id="team1-name" class="text-6xl font-extrabold">Team 1</h2>
+            <p class="text-9xl font-extrabold text-white mt-8" style="text-shadow: 2px 2px 4px #00000080;"><span id="team1-score">0</span></p>
+        </div>
+
+        <!-- Center Section (Game Board) -->
+        <div class="w-1/2 bg-gray-200 flex flex-col items-center justify-evenly p-12 text-center">
+            <div id="question-area" class="bg-white p-12 rounded-2xl shadow-2xl w-full">
+                <p class="text-3xl text-gray-500">Convert the following:</p>
+                <p id="question-text" class="text-7xl font-bold my-8 text-gray-800">1.2 kg to mg</p>
+            </div>
+            
+            <div class="flex w-full justify-around">
+                <!-- Team 1 Answer Area -->
+                <div class="input-container">
+                    <input type="text" id="team1-answer" class="answer-input" placeholder="Answer" readonly onclick="openNumpad(this)">
+                    <select id="team1-unit" class="unit-select"></select>
+                </div>
+                <!-- Team 2 Answer Area -->
+                <div class="input-container">
+                    <input type="text" id="team2-answer" class="answer-input" placeholder="Answer" readonly onclick="openNumpad(this)">
+                    <select id="team2-unit" class="unit-select"></select>
+                </div>
+            </div>
+
+            <div>
+                <button id="check-btn" class="btn bg-green-500 hover:bg-green-600 text-white">Check Answers</button>
+                <button id="next-btn" class="btn bg-gray-500 hover:bg-gray-600 text-white hidden">Next Question</button>
+            </div>
+            
+             <div id="feedback-area" class="text-4xl font-bold h-14"></div>
+        </div>
+
+        <!-- Team 2 Section (Right) -->
+        <div id="team2-section" class="team-section w-1/4 flex flex-col items-center justify-center p-8 border-l-4 border-gray-300">
+            <h2 id="team2-name" class="text-6xl font-extrabold">Team 2</h2>
+            <p class="text-9xl font-extrabold text-white mt-8" style="text-shadow: 2px 2px 4px #00000080;"><span id="team2-score">0</span></p>
+        </div>
+    </div>
+
+    <!-- Number Pad -->
+    <div id="numpad-container" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+        <div class="bg-gray-200 rounded-lg shadow-xl w-full max-w-[280px]">
+            <div id="numpad-header" class="p-2 bg-gray-300 rounded-t-lg">
+                <h3 class="font-bold text-center text-gray-700">Number Pad</h3>
+            </div>
+            <div id="numpad" class="grid grid-cols-3 gap-2 p-3">
+                <button class="numpad-btn" onclick="appendNumpad('1')">1</button>
+                <button class="numpad-btn" onclick="appendNumpad('2')">2</button>
+                <button class="numpad-btn" onclick="appendNumpad('3')">3</button>
+                <button class="numpad-btn" onclick="appendNumpad('4')">4</button>
+                <button class="numpad-btn" onclick="appendNumpad('5')">5</button>
+                <button class="numpad-btn" onclick="appendNumpad('6')">6</button>
+                <button class="numpad-btn" onclick="appendNumpad('7')">7</button>
+                <button class="numpad-btn" onclick="appendNumpad('8')">8</button>
+                <button class="numpad-btn" onclick="appendNumpad('9')">9</button>
+                <button class="numpad-btn" onclick="appendNumpad('.')">.</button>
+                <button class="numpad-btn" onclick="appendNumpad('0')">0</button>
+                <button class="numpad-btn" onclick="backspaceNumpad()">&larr;</button>
+                <button class="numpad-btn bg-blue-500 text-white col-span-3" onclick="closeNumpad()">Done</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const units = [
+            { name: 'kilo', symbol: 'k', factor: 1000 },
+            { name: 'hecto', symbol: 'h', factor: 100 },
+            { name: 'deca', symbol: 'da', factor: 10 },
+            { name: 'base', symbol: '', factor: 1 },
+            { name: 'deci', symbol: 'd', factor: 0.1 },
+            { name: 'centi', symbol: 'c', factor: 0.01 },
+            { name: 'milli', symbol: 'm', factor: 0.001 },
+        ];
+        const baseTypes = ['g', 'm', 'L'];
+        
+        let teamColors = {};
+
+        let currentQuestion = {};
+        let team1Score = 0;
+        let team2Score = 0;
+        let activeInput = null;
+
+        const team1ScoreEl = document.getElementById('team1-score');
+        const team2ScoreEl = document.getElementById('team2-score');
+        const team1AnswerEl = document.getElementById('team1-answer');
+        const team2AnswerEl = document.getElementById('team2-answer');
+        const team1UnitEl = document.getElementById('team1-unit');
+        const team2UnitEl = document.getElementById('team2-unit');
+        const questionTextEl = document.getElementById('question-text');
+        const checkBtn = document.getElementById('check-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const feedbackEl = document.getElementById('feedback-area');
+        const numpadContainer = document.getElementById('numpad-container');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const setupModal = document.getElementById('setup-modal');
+        const gameContainer = document.getElementById('game-container');
+        const startGameBtn = document.getElementById('start-game-btn');
+
+        function lightenColor(hex, percent) {
+            hex = hex.replace("#", "");
+            const num = parseInt(hex, 16),
+            amt = Math.round(2.55 * percent),
+            R = (num >> 16) + amt,
+            G = (num >> 8 & 0x00FF) + amt,
+            B = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
+        }
+
+        function getContrastColor(hexcolor){
+            hexcolor = hexcolor.replace("#", "");
+            var r = parseInt(hexcolor.substr(0,2),16);
+            var g = parseInt(hexcolor.substr(2,2),16);
+            var b = parseInt(hexcolor.substr(4,2),16);
+            var yiq = ((r*299)+(g*587)+(b*114))/1000;
+            return (yiq >= 128) ? '#1f2937' : '#FFFFFF';
+        }
+
+        function startGame() {
+            const team1Name = document.getElementById('team1-name-input').value || 'Team 1';
+            const team2Name = document.getElementById('team2-name-input').value || 'Team 2';
+            const team1Color = document.getElementById('team1-color-input').value;
+            const team2Color = document.getElementById('team2-color-input').value;
+            
+            teamColors = {
+                team1: {
+                    bg: team1Color,
+                    text: getContrastColor(team1Color),
+                    correct: lightenColor(team1Color, 20)
+                },
+                team2: {
+                    bg: team2Color,
+                    text: getContrastColor(team2Color),
+                    correct: lightenColor(team2Color, 20)
+                }
+            };
+
+            document.getElementById('team1-name').textContent = team1Name;
+            document.getElementById('team2-name').textContent = team2Name;
+            
+            const team1Section = document.getElementById('team1-section');
+            const team2Section = document.getElementById('team2-section');
+            const team1NameEl = document.getElementById('team1-name');
+            const team2NameEl = document.getElementById('team2-name');
+
+            team1Section.style.backgroundColor = teamColors.team1.bg;
+            team2Section.style.backgroundColor = teamColors.team2.bg;
+            team1NameEl.style.color = teamColors.team1.text;
+            team2NameEl.style.color = teamColors.team2.text;
+
+            team1AnswerEl.style.borderColor = teamColors.team1.bg;
+            team1UnitEl.style.borderColor = teamColors.team1.bg;
+            team2AnswerEl.style.borderColor = teamColors.team2.bg;
+            team2UnitEl.style.borderColor = teamColors.team2.bg;
+
+            setupModal.classList.add('hidden');
+            gameContainer.classList.remove('hidden');
+            generateQuestion();
+        }
+
+        function generateQuestion() {
+            const baseType = baseTypes[Math.floor(Math.random() * baseTypes.length)];
+            
+            let fromUnit, toUnit;
+            do {
+                fromUnit = units[Math.floor(Math.random() * units.length)];
+                toUnit = units[Math.floor(Math.random() * units.length)];
+            } while (fromUnit.symbol === toUnit.symbol);
+
+            const startValue = parseFloat((Math.random() * 20 + 1).toFixed(2));
+            const baseValue = startValue * fromUnit.factor;
+            const finalValue = baseValue / toUnit.factor;
+
+            currentQuestion = {
+                startValue,
+                fromUnit: fromUnit.symbol + baseType,
+                toUnit: toUnit.symbol + baseType,
+                correctAnswer: parseFloat(finalValue.toPrecision(4)),
+            };
+
+            questionTextEl.textContent = `${currentQuestion.startValue} ${currentQuestion.fromUnit} to ${currentQuestion.toUnit}`;
+            populateUnitSelectors(baseType);
+            resetBoard();
+        }
+
+        function populateUnitSelectors(baseType) {
+            team1UnitEl.innerHTML = '';
+            team2UnitEl.innerHTML = '';
+            
+            const defaultOption1 = new Option('Unit', '', true, true);
+            defaultOption1.disabled = true;
+            const defaultOption2 = new Option('Unit', '', true, true);
+            defaultOption2.disabled = true;
+            team1UnitEl.add(defaultOption1);
+            team2UnitEl.add(defaultOption2);
+
+            units.forEach(unit => {
+                const option1 = new Option(`${unit.symbol}${baseType}`, `${unit.symbol}${baseType}`);
+                const option2 = new Option(`${unit.symbol}${baseType}`, `${unit.symbol}${baseType}`);
+                team1UnitEl.add(option1);
+                team2UnitEl.add(option2);
+            });
+        }
+
+        function resetBoard() {
+            team1AnswerEl.value = '';
+            team2AnswerEl.value = '';
+            team1AnswerEl.classList.remove('bg-green-200', 'bg-red-200');
+            team2AnswerEl.classList.remove('bg-green-200', 'bg-red-200');
+            team1UnitEl.classList.remove('bg-green-200', 'bg-red-200');
+            team2UnitEl.classList.remove('bg-green-200', 'bg-red-200');
+            
+            team1AnswerEl.style.borderColor = teamColors.team1.bg;
+            team1UnitEl.style.borderColor = teamColors.team1.bg;
+            team2AnswerEl.style.borderColor = teamColors.team2.bg;
+            team2UnitEl.style.borderColor = teamColors.team2.bg;
+
+            const team1Section = document.getElementById('team1-section');
+            const team2Section = document.getElementById('team2-section');
+            team1Section.style.backgroundColor = teamColors.team1.bg;
+            team2Section.style.backgroundColor = teamColors.team2.bg;
+
+
+            checkBtn.classList.remove('hidden');
+            nextBtn.classList.add('hidden');
+            feedbackEl.textContent = '';
+        }
+
+        function checkAnswers() {
+            const team1Num = parseFloat(team1AnswerEl.value);
+            const team2Num = parseFloat(team2AnswerEl.value);
+            const team1UnitVal = team1UnitEl.value;
+            const team2UnitVal = team2UnitEl.value;
+            
+            const isTeam1Correct = team1Num === currentQuestion.correctAnswer && team1UnitVal === currentQuestion.toUnit;
+            const isTeam2Correct = team2Num === currentQuestion.correctAnswer && team2UnitVal === currentQuestion.toUnit;
+
+            if (isTeam1Correct) {
+                team1Score++;
+                team1ScoreEl.textContent = team1Score;
+                team1AnswerEl.classList.add('bg-green-200');
+                team1UnitEl.classList.add('bg-green-200');
+                team1AnswerEl.style.borderColor = '#22c55e';
+                team1UnitEl.style.borderColor = '#22c55e';
+                document.getElementById('team1-section').style.backgroundColor = teamColors.team1.correct;
+            } else {
+                team1AnswerEl.classList.add('bg-red-200');
+                team1UnitEl.classList.add('bg-red-200');
+                team1AnswerEl.style.borderColor = '#ef4444';
+                team1UnitEl.style.borderColor = '#ef4444';
+            }
+
+            if (isTeam2Correct) {
+                team2Score++;
+                team2ScoreEl.textContent = team2Score;
+                team2AnswerEl.classList.add('bg-green-200');
+                team2UnitEl.classList.add('bg-green-200');
+                team2AnswerEl.style.borderColor = '#22c55e';
+                team2UnitEl.style.borderColor = '#22c55e';
+                 document.getElementById('team2-section').style.backgroundColor = teamColors.team2.correct;
+            } else {
+                team2AnswerEl.classList.add('bg-red-200');
+                team2UnitEl.classList.add('bg-red-200');
+                team2AnswerEl.style.borderColor = '#ef4444';
+                team2UnitEl.style.borderColor = '#ef4444';
+            }
+            
+            feedbackEl.textContent = `Correct Answer: ${currentQuestion.correctAnswer} ${currentQuestion.toUnit}`;
+            checkBtn.classList.add('hidden');
+            nextBtn.classList.remove('hidden');
+        }
+
+        // --- Numpad Functions ---
+        function openNumpad(inputElement) {
+            activeInput = inputElement;
+            numpadContainer.classList.remove('hidden');
+        }
+
+        function closeNumpad() {
+            activeInput = null;
+            numpadContainer.classList.add('hidden');
+        }
+
+        function appendNumpad(value) {
+            if (!activeInput) return;
+            if(value === '.' && activeInput.value.includes('.')) return;
+            activeInput.value += value;
+        }
+
+        function backspaceNumpad() {
+            if (!activeInput) return;
+            activeInput.value = activeInput.value.slice(0, -1);
+        }
+
+        dragElement(numpadContainer);
+        function dragElement(elmnt) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            const header = document.getElementById("numpad-header");
+            if (header) {
+                header.onmousedown = dragMouseDown;
+                header.ontouchstart = dragMouseDown;
+            }
+
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                let clientX = e.clientX || e.touches[0].clientX;
+                let clientY = e.clientY || e.touches[0].clientY;
+                pos3 = clientX;
+                pos4 = clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+                document.ontouchend = closeDragElement;
+                document.ontouchmove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                let clientX = e.clientX || e.touches[0].clientX;
+                let clientY = e.clientY || e.touches[0].clientY;
+                pos1 = pos3 - clientX;
+                pos2 = pos4 - clientY;
+                pos3 = clientX;
+                pos4 = clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                document.ontouchend = null;
+                document.ontouchmove = null;
+            }
+        }
+        
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // --- Event Listeners ---
+        startGameBtn.addEventListener('click', startGame);
+        checkBtn.addEventListener('click', checkAnswers);
+        nextBtn.addEventListener('click', generateQuestion);
+        fullscreenBtn.addEventListener('click', toggleFullScreen);
+
+    </script>
+</body>
+</html>
+
