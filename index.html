@@ -26,9 +26,9 @@
             border: 4px solid #9ca3af;
             border-radius: 1rem;
             padding: 1rem;
-            width: 320px; /* Increased width for more space */
+            width: 250px;
             text-align: center;
-            font-size: 2.5rem;
+            font-size: 2.25rem;
             font-weight: 700;
             background-color: #f9fafb;
             cursor: pointer;
@@ -38,7 +38,7 @@
             border: 4px solid #9ca3af;
             border-radius: 1rem;
             padding: 1rem;
-            font-size: 2.5rem;
+            font-size: 2.25rem;
             font-weight: 700;
             background-color: #f9fafb;
             cursor: pointer;
@@ -78,7 +78,7 @@
             border: 2px solid #d1d5db;
             border-radius: 0.5rem;
             padding: 0.5rem 1rem;
-            font-size: 2rem; /* Increased font size */
+            font-size: 2rem;
         }
         #setup-modal input[type="color"] {
             -webkit-appearance: none;
@@ -98,7 +98,6 @@
             border-radius: 0.75rem;
             border: 4px solid #9ca3af;
         }
-
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -139,43 +138,46 @@
 
     <div id="game-container" class="flex h-screen w-screen relative hidden">
         <!-- Team 1 Section (Left) -->
-        <div id="team1-section" class="team-section w-1/5 flex flex-col items-center justify-center p-8 border-r-4 border-gray-300">
-            <h2 id="team1-name" class="text-5xl font-extrabold">Team 1</h2>
-            <p class="text-9xl font-extrabold text-white mt-8" style="text-shadow: 2px 2px 4px #00000080;"><span id="team1-score">0</span></p>
+        <div id="team1-section" class="team-section w-1/3 flex flex-col items-center p-8 border-r-4 border-gray-300">
+            <div class="flex-grow flex flex-col items-center justify-center">
+                <h2 id="team1-name" class="text-6xl font-extrabold text-center">Team 1</h2>
+                <p class="text-9xl font-extrabold text-white mt-8" style="text-shadow: 2px 2px 4px #00000080;"><span id="team1-score">0</span></p>
+            </div>
+            <div class="w-full">
+                <h3 id="team1-answer-label" class="text-3xl font-bold mb-2 text-center">Team 1's Answer</h3>
+                <div class="input-container">
+                    <input type="text" id="team1-answer" class="answer-input w-full" placeholder="Answer" readonly onclick="openNumpad(this)">
+                    <select id="team1-unit" class="unit-select"></select>
+                </div>
+            </div>
         </div>
 
         <!-- Center Section (Game Board) -->
-        <div class="w-3/5 bg-gray-200 flex flex-col items-center justify-evenly p-12 text-center">
-            <div id="question-area" class="bg-white p-12 rounded-2xl shadow-2xl w-full">
+        <div class="w-1/3 bg-gray-200 flex flex-col items-center justify-center p-8 text-center gap-12">
+            <div id="question-area" class="bg-white p-8 rounded-2xl shadow-2xl w-full">
                 <p class="text-3xl text-gray-500">Convert the following:</p>
-                <p id="question-text" class="text-7xl font-bold my-8 text-gray-800">1.2 kg to mg</p>
+                <p id="question-text" class="text-6xl font-bold my-6 text-gray-800">1.2 kg to mg</p>
             </div>
-            
-            <div class="flex w-full justify-around">
-                <!-- Team 1 Answer Area -->
-                <div class="input-container">
-                    <input type="text" id="team1-answer" class="answer-input" placeholder="Answer" readonly onclick="openNumpad(this)">
-                    <select id="team1-unit" class="unit-select"></select>
-                </div>
-                <!-- Team 2 Answer Area -->
-                <div class="input-container">
-                    <input type="text" id="team2-answer" class="answer-input" placeholder="Answer" readonly onclick="openNumpad(this)">
-                    <select id="team2-unit" class="unit-select"></select>
-                </div>
-            </div>
-
             <div>
                 <button id="check-btn" class="btn bg-green-500 hover:bg-green-600 text-white">Check Answers</button>
                 <button id="next-btn" class="btn bg-gray-500 hover:bg-gray-600 text-white hidden">Next Question</button>
+                <div id="feedback-area" class="text-4xl font-bold h-14 mt-4"></div>
             </div>
-            
-             <div id="feedback-area" class="text-4xl font-bold h-14"></div>
         </div>
 
         <!-- Team 2 Section (Right) -->
-        <div id="team2-section" class="team-section w-1/5 flex flex-col items-center justify-center p-8 border-l-4 border-gray-300">
-            <h2 id="team2-name" class="text-5xl font-extrabold">Team 2</h2>
-            <p class="text-9xl font-extrabold text-white mt-8" style="text-shadow: 2px 2px 4px #00000080;"><span id="team2-score">0</span></p>
+        <div id="team2-section" class="team-section w-1/3 flex flex-col items-center p-8 border-l-4 border-gray-300">
+             <div class="flex-grow flex flex-col items-center justify-center">
+                <h2 id="team2-name" class="text-6xl font-extrabold text-center">Team 2</h2>
+                <p class="text-9xl font-extrabold text-white mt-8" style="text-shadow: 2px 2px 4px #00000080;"><span id="team2-score">0</span></p>
+            </div>
+            <div class="w-full">
+                <h3 id="team2-answer-label" class="text-3xl font-bold mb-2 text-center">Team 2's Answer</h3>
+                <div class="input-container">
+                    <input type="text" id="team2-answer" class="answer-input w-full" placeholder="Answer" readonly onclick="openNumpad(this)">
+                    <select id="team2-unit" class="unit-select"></select>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -290,6 +292,9 @@
             team1NameEl.style.color = teamColors.team1.text;
             team2NameEl.style.color = teamColors.team2.text;
 
+            document.getElementById('team1-answer-label').style.color = teamColors.team1.text;
+            document.getElementById('team2-answer-label').style.color = teamColors.team2.text;
+            
             team1AnswerEl.style.borderColor = teamColors.team1.bg;
             team1UnitEl.style.borderColor = teamColors.team1.bg;
             team2AnswerEl.style.borderColor = teamColors.team2.bg;
